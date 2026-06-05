@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vidaa Remote</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --bg:       #0d0d0f;
+  --surface:  #17171b;
+  --surface2: #1e1e24;
+  --border:   #2a2a32;
+  --accent:   #e8ff47;
+  --accent2:  #ff4757;
+  --text:     #e8e8f0;
+  --muted:    #55556a;
+  --radius:   14px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 48px;
+  gap: 0;
+}
+
+/* ── Header ── */
+header {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 3px;
+  color: var(--accent);
+}
+.status-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: background .4s;
+  box-shadow: 0 0 0 0 transparent;
+}
+.status-dot.on {
+  background: #44ff88;
+  box-shadow: 0 0 8px #44ff8899;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 6px #44ff8866; }
+  50%      { box-shadow: 0 0 14px #44ff88cc; }
+}
+
+/* ── Info bar ── */
+.infobar {
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.infobar span { color: var(--text); font-weight: 500; }
+.vol-bar-wrap {
+  display: flex; align-items: center; gap: 8px;
+}
+.vol-track {
+  width: 80px; height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.vol-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width .3s;
+  width: 0%;
+}
+
+/* ── Remote body ── */
+.remote {
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Section label ── */
+.section-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+/* ── Power row ── */
+.power-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.btn-power {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  border: 2px solid var(--accent2);
+  background: transparent;
+  color: var(--accent2);
+  font-size: 22px;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-power:hover { background: var(--accent2); color: #fff; }
+.btn-power:active { transform: scale(.92); }
+
+.btn-mute {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-mute:hover { border-color: var(--accent); color: var(--accent); }
+.btn-mute.active { background: var(--accent); color: var(--bg); }
+.btn-mute:active { transform: scale(.92); }
+
+.btn-home {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-home:hover { border-color: var(--accent); color: var(--accent); }
+.btn-home:active { transform: scale(.92); }
+
+/* ── Volume + Channel ── */
+.vc-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.vc-group {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.vc-btn {
+  width: 100%;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .12s;
+  display: flex; align-items: center; justify-content: center;
+}
+.vc-btn:hover { border-color: var(--accent); color: var(--accent); }
+.vc-btn:active { transform: scale(.94); background: var(--border); }
+
+/* ── D-Pad ── */
+.dpad-wrap {
+  display: flex;
+  justify-content: center;
+}
+.dpad {
+  display: grid;
+  grid-template-columns: 56px 56px 56px;
+  grid-template-rows: 56px 56px 56px;
+  gap: 4px;
+}
+.dpad-btn {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all .12s;
+  display: flex; align-items: center; justify-content: center;
+}
+.dpad-btn:hover { border-color: var(--accent); color: var(--accent); }
+.dpad-btn:active { transform: scale(.88); background: var(--border); }
+.dpad-ok {
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 13px;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 1px;
+  border: none;
+}
+.dpad-ok:hover { background: #d4e83f; color: var(--bg); }
+.dpad-empty { visibility: hidden; }
+
+/* ── Navigation row ── */
+.nav-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.btn-nav {
+  flex: 1;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .12s;
+  letter-spacing: .5px;
+}
+.btn-nav:hover { border-color: var(--border); color: var(--text); background: var(--border); }
+.btn-nav:active { transform: scale(.95); }
+
+/* ── Playback ── */
+.playback-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.btn-play {
+  flex: 1;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all .12s;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-play:hover { border-color: var(--accent); color: var(--accent); }
+.btn-play:active { transform: scale(.94); }
+
+/* ── Volume slider ── */
+.slider-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  transition: transform .1s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+/* ── Sources ── */
+.sources-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.btn-src {
+  height: 48px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .12s;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 2px;
+  letter-spacing: .3px;
+}
+.btn-src .src-icon { font-size: 14px; }
+.btn-src:hover { border-color: var(--accent); color: var(--accent); }
+.btn-src:active { transform: scale(.94); }
+
+/* ── Apps ── */
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.btn-app {
+  height: 52px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .12s;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 3px;
+}
+.btn-app .app-icon { font-size: 18px; }
+.btn-app:hover { border-color: var(--accent); transform: translateY(-2px); }
+.btn-app:active { transform: scale(.95) translateY(0); }
+
+/* ── Color buttons ── */
+.color-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.btn-color {
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  transition: all .12s;
+  opacity: .85;
+}
+.btn-color:hover { opacity: 1; transform: translateY(-2px); }
+.btn-color:active { transform: scale(.94); }
+.btn-red    { background: #e84057; color: #fff; }
+.btn-green  { background: #2ed573; color: #000; }
+.btn-yellow { background: #ffd32a; color: #000; }
+.btn-blue   { background: #1e90ff; color: #fff; }
+
+/* ── Number pad ── */
+.numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.btn-num {
+  height: 48px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all .12s;
+}
+.btn-num:hover { border-color: var(--accent); color: var(--accent); }
+.btn-num:active { transform: scale(.92); background: var(--border); }
+
+/* ── Divider ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 -20px;
+  width: calc(100% + 40px);
+}
+
+/* ── Toast ── */
+#toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 20px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+  pointer-events: none;
+  z-index: 999;
+  white-space: nowrap;
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+#toast.ok   { border-color: var(--accent); color: var(--accent); }
+#toast.err  { border-color: var(--accent2); color: var(--accent2); }
+
+/* ── Section wrapper ── */
+.section { display: flex; flex-direction: column; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">VIDAA REMOTE</div>
+  <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)">
+    <span id="conn-label">Verbinde…</span>
+    <div class="status-dot" id="dot"></div>
+  </div>
+</header>
+
+<div class="infobar">
+  <div>📺 <span id="info-channel">–</span></div>
+  <div class="vol-bar-wrap">
+    🔊 <span id="info-vol">–</span>
+    <div class="vol-track"><div class="vol-fill" id="vol-fill"></div></div>
+  </div>
+</div>
+
+<div class="remote">
+
+  <!-- Power / Home / Mute -->
+  <div class="section">
+    <div class="power-row">
+      <button class="btn-power" onclick="key('KEY_POWER')" title="Power">⏻</button>
+      <button class="btn-home"  onclick="key('KEY_HOME')"  title="Home">⌂</button>
+      <button class="btn-home"  onclick="key('KEY_MENU')"  title="Menü" style="font-size:14px">☰</button>
+      <button class="btn-home"  onclick="key('KEY_EXIT')"  title="Exit" style="font-size:14px">✕</button>
+      <button class="btn-mute" id="btn-mute" onclick="key('KEY_MUTE')" title="Mute">🔇</button>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Volume + Channel -->
+  <div class="vc-row">
+    <div class="vc-group">
+      <div class="section-label">Lautstärke</div>
+      <button class="vc-btn" onclick="key('KEY_VOLUMEUP')">＋</button>
+      <button class="vc-btn" onclick="key('KEY_VOLUMEDOWN')">－</button>
+    </div>
+    <div class="vc-group">
+      <div class="section-label">Kanal</div>
+      <button class="vc-btn" onclick="key('KEY_CHANNELUP')">▲</button>
+      <button class="vc-btn" onclick="key('KEY_CHANNELDOWN')">▼</button>
+    </div>
+  </div>
+
+  <!-- Volume Slider -->
+  <div class="section slider-section">
+    <div class="section-label">Lautstärke direkt setzen</div>
+    <input type="range" id="vol-slider" min="0" max="100" value="0"
+           oninput="sliderMove(this.value)"
+           onchange="sliderSet(this.value)">
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- D-Pad -->
+  <div class="dpad-wrap">
+    <div class="dpad">
+      <div class="dpad-empty"></div>
+      <button class="dpad-btn" onclick="key('KEY_UP')">▲</button>
+      <div class="dpad-empty"></div>
+      <button class="dpad-btn" onclick="key('KEY_LEFT')">◀</button>
+      <button class="dpad-btn dpad-ok" onclick="key('KEY_OK')">OK</button>
+      <button class="dpad-btn" onclick="key('KEY_RIGHT')">▶</button>
+      <div class="dpad-empty"></div>
+      <button class="dpad-btn" onclick="key('KEY_DOWN')">▼</button>
+      <div class="dpad-empty"></div>
+    </div>
+  </div>
+
+  <!-- Back / Info / Subtitle -->
+  <div class="nav-row">
+    <button class="btn-nav" onclick="key('KEY_RETURNS')">↩ Zurück</button>
+    <button class="btn-nav" onclick="key('KEY_INFO')">ℹ Info</button>
+    <button class="btn-nav" onclick="key('KEY_SUBTITLE')">CC Untertitel</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Playback -->
+  <div class="section">
+    <div class="section-label">Wiedergabe</div>
+    <div class="playback-row">
+      <button class="btn-play" onclick="key('KEY_REWIND')"       title="Zurückspulen">⏮</button>
+      <button class="btn-play" onclick="key('KEY_PLAY')"         title="Play">▶</button>
+      <button class="btn-play" onclick="key('KEY_PAUSE')"        title="Pause">⏸</button>
+      <button class="btn-play" onclick="key('KEY_STOP')"         title="Stop">⏹</button>
+      <button class="btn-play" onclick="key('KEY_FORWARDS')"     title="Vorspulen">⏭</button>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Sources -->
+  <div class="section">
+    <div class="section-label">Eingangsquellen</div>
+    <div class="sources-grid">
+      <button class="btn-src" onclick="src('0')"><span class="src-icon">📡</span>TV</button>
+      <button class="btn-src" onclick="src('3')"><span class="src-icon">🔌</span>HDMI 1</button>
+      <button class="btn-src" onclick="src('4')"><span class="src-icon">🔌</span>HDMI 2</button>
+      <button class="btn-src" onclick="src('5')"><span class="src-icon">🔌</span>HDMI 3</button>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Apps -->
+  <div class="section">
+    <div class="section-label">Apps starten</div>
+    <div class="apps-grid">
+      <button class="btn-app" onclick="app_launch('netflix')">
+        <span class="app-icon">🎬</span>Netflix
+      </button>
+      <button class="btn-app" onclick="app_launch('youtube')">
+        <span class="app-icon">▶️</span>YouTube
+      </button>
+      <button class="btn-app" onclick="app_launch('amazon')">
+        <span class="app-icon">📦</span>Prime
+      </button>
+      <button class="btn-app" onclick="app_launch('disney')">
+        <span class="app-icon">✨</span>Disney+
+      </button>
+      <button class="btn-app" onclick="key('KEY_HOME')">
+        <span class="app-icon">🏠</span>Home
+      </button>
+      <button class="btn-app" onclick="key('KEY_MENU')">
+        <span class="app-icon">☰</span>Menü
+      </button>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Color buttons -->
+  <div class="section">
+    <div class="section-label">Farbtasten</div>
+    <div class="color-row">
+      <button class="btn-color btn-red"    onclick="key('KEY_RED')">ROT</button>
+      <button class="btn-color btn-green"  onclick="key('KEY_GREEN')">GRÜN</button>
+      <button class="btn-color btn-yellow" onclick="key('KEY_YELLOW')">GELB</button>
+      <button class="btn-color btn-blue"   onclick="key('KEY_BLUE')">BLAU</button>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Numpad -->
+  <div class="section">
+    <div class="section-label">Zifferntasten</div>
+    <div class="numpad">
+      <button class="btn-num" onclick="key('KEY_1')">1</button>
+      <button class="btn-num" onclick="key('KEY_2')">2</button>
+      <button class="btn-num" onclick="key('KEY_3')">3</button>
+      <button class="btn-num" onclick="key('KEY_4')">4</button>
+      <button class="btn-num" onclick="key('KEY_5')">5</button>
+      <button class="btn-num" onclick="key('KEY_6')">6</button>
+      <button class="btn-num" onclick="key('KEY_7')">7</button>
+      <button class="btn-num" onclick="key('KEY_8')">8</button>
+      <button class="btn-num" onclick="key('KEY_9')">9</button>
+      <button class="btn-num" onclick="key('KEY_CHANNELDOT')">·</button>
+      <button class="btn-num" onclick="key('KEY_0')">0</button>
+      <button class="btn-num" onclick="key('KEY_RETURNS')" style="font-size:16px">⌫</button>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+let lastVol = 0;
+
+// ── API helpers ──
+async function key(k) {
+  const r = await fetch(`/api/key/${k}`, {method:'POST'});
+  const d = await r.json();
+  if (!d.ok) toast('Nicht verbunden', 'err');
+}
+
+async function src(id) {
+  const names = {'0':'TV','3':'HDMI 1','4':'HDMI 2','5':'HDMI 3'};
+  await fetch(`/api/source/${id}`, {method:'POST'});
+  toast(`Quelle: ${names[id]||id}`, 'ok');
+}
+
+async function app_launch(name) {
+  const apps = {
+    netflix: {appId:'1', name:'Netflix',    url:'netflix'},
+    youtube: {appId:'3', name:'YouTube',    url:'youtube'},
+    amazon:  {appId:'2', name:'Prime Video',url:'amazon'},
+    disney:  {appId:'295',name:'Disney+',   url:'https://cd-dmgz.bamgrid.com/bbd/hisense_tv/index.html'},
+  };
+  if (!apps[name]) return;
+  await fetch('/api/app', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(apps[name])
+  });
+  toast(`Starte ${apps[name].name}`, 'ok');
+}
+
+let sliderTimer = null;
+function sliderMove(v) {
+  document.getElementById('vol-fill').style.width = v + '%';
+  document.getElementById('info-vol').textContent = v;
+}
+function sliderSet(v) {
+  clearTimeout(sliderTimer);
+  sliderTimer = setTimeout(async () => {
+    await fetch('/api/volume', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({level: parseInt(v)})
+    });
+    toast(`Lautstärke: ${v}`, 'ok');
+  }, 200);
+}
+
+// ── Toast ──
+let toastTimer;
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 2000);
+}
+
+// ── Status polling ──
+async function poll() {
+  try {
+    const r = await fetch('/api/status');
+    const d = await r.json();
+    const dot   = document.getElementById('dot');
+    const label = document.getElementById('conn-label');
+    if (d.connected) {
+      dot.className   = 'status-dot on';
+      label.textContent = 'Verbunden';
+    } else {
+      dot.className   = 'status-dot';
+      label.textContent = 'Getrennt';
+    }
+    // Channel
+    document.getElementById('info-channel').textContent = d.channel || '–';
+    // Volume
+    const vol = d.volume || 0;
+    document.getElementById('info-vol').textContent = vol;
+    document.getElementById('vol-fill').style.width = vol + '%';
+    const slider = document.getElementById('vol-slider');
+    if (Math.abs(slider.value - vol) > 2) slider.value = vol;
+    // Mute button
+    document.getElementById('btn-mute').classList.toggle('active', d.muted);
+  } catch(e) {}
+}
+
+poll();
+setInterval(poll, 3000);
+</script>
+</body>
+</html>
