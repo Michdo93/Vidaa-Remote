@@ -83,6 +83,9 @@ python app.py
 
 Browser öffnen: **http://localhost:5000**
 
+**Anmerkung**: Wenn man natürlich per SSH die ganzen Installationen auf einen externen Rechner ausgeführt hat, sollte man entsprechend die IP dieses Rechners verwenden.
+Die IP-Adresse findet man per `ip a`.
+
 ---
 
 ### Schritt 4 – Als systemd-Dienst einrichten
