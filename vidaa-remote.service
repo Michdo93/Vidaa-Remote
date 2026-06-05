@@ -6,8 +6,8 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=<USERNAME>
-WorkingDirectory=/opt/vidaa-remote
-ExecStart=/opt/vidaa-remote/bin/python app.py
+WorkingDirectory=/opt/Vidaa-Remote
+ExecStart=/opt/Vidaa-Remote/bin/python app.py
 Restart=on-failure
 RestartSec=15
 StandardOutput=journal
