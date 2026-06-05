@@ -3,6 +3,8 @@
 Web-basierte Fernbedienung für Hisense / VIDAA Smart TVs.
 Läuft lokal als Flask-App – keine Cloud, keine externen Dienste.
 
+![Vidaa Remote](https://github.com/Michdo93/test2/blob/main/vidaa_remote.png?raw=true)
+
 ---
 
 ## Voraussetzungen
